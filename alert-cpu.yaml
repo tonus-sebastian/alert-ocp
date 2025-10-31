@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: custom-alert-cpu-peak
+  namespace: openshift-monitoring
+spec:
+  groups:
+  - name: custom-alert-cpu-peak
+    rules:
+    - alert: HighCPUUsage
+      expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High CPU usage detected"
+        description: "Instance {{ $labels.instance }} CPU usage is above 80% for 5 minutes."
