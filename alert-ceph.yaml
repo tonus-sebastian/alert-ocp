@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ceph-warning-alert
+  namespace: openshift-storage
+spec:
+  groups:
+  - name: ceph-health
+    rules:
+    - alert: CephClusterWarning
+      expr: ceph_health_status > 1
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Ceph Cluster Warning"
+        description: "Ceph cluster is in a degraded state. Check Ceph status immediately!"
