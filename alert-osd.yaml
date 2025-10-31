@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ceph-osd-near-full-alert
+  namespace: openshift-storage
+spec:
+  groups:
+  - name: ceph-osd-rules
+    rules:
+    - alert: OSDNearFull
+      expr: (ceph_osd_stat_bytes_used / ceph_osd_stat_bytes) * 100 > 80
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Ceph OSD Near Full Alert"
+        description: "One or more Ceph OSDs are above 85% capacity. Consider adding more storage."
