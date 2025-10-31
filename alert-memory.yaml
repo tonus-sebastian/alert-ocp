@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: memory-usage-alert
+  namespace: openshift-monitoring
+spec:
+  groups:
+  - name: memory-usage-rules
+    rules:
+    - alert: HighMemoryUsage
+      expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 80
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High Memory Usage on {{ $labels.instance }}"
+        description: "Memory usage is above 80% for more than 5 minutes on {{ $labels.instance }}."
